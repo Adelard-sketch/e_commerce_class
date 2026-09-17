@@ -1,8 +1,8 @@
 <?php
 $host = getenv('TASKS_DB_HOST') ?: "localhost";
-$db_user = getenv('TASKS_DB_USER') ?: "root";
-$db_pass = getenv('TASKS_DB_PASS') ?: "";
-$db_name = getenv('TASKS_DB_NAME') ?: "tasks_app";
+$db_user = getenv('TASKS_DB_USER') ?: "your_mysql_username";
+$db_pass = getenv('TASKS_DB_PASS') ?: "your_mysql_password";
+$db_name = getenv('TASKS_DB_NAME') ?: "your_database_name";
 
 mysqli_report(MYSQLI_REPORT_OFF);
 $conn = new mysqli($host, $db_user, $db_pass, $db_name);
