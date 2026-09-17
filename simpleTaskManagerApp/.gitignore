@@ -1,0 +1,7 @@
+# Local/server database credentials
+.env
+
+# IDE and operating-system files
+.vscode/
+.DS_Store
+Thumbs.db
