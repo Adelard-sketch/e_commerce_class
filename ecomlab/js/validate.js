@@ -96,7 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return emailRegex.test(value.trim());
         },
         customer_pass: function (value) {
-            return /^(?=.*\d).{8,}$/.test(value);
+            // Must have 8+ chars, uppercase, lowercase, digit, and special character
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(value);
         },
         customer_confirm_pass: function (value) {
             const password = document.getElementById('customer_pass');
@@ -114,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }, {
         customer_name: 'Full name is required.',
         customer_email: 'Please enter a valid email address.',
-        customer_pass: 'Password must be at least 8 characters and contain a number.',
+        customer_pass: 'Password needs 8+ characters with uppercase, lowercase, a number and a special character.',
         customer_confirm_pass: 'Passwords do not match.',
         customer_country: 'Please select a country.',
         customer_city: 'City is required.',

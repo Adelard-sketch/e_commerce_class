@@ -9,15 +9,21 @@ require_once "../core/core.php";
     <title>Login</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="auth-body">
+<body class="site-body auth-body">
+    <!-- Shared navigation -->
+    <?php require_once __DIR__ . '/layout/header.php'; ?>
+
+    <!-- Login form -->
     <div class="auth-page">
         <h1>Login</h1>
 
+        <!-- Login feedback -->
         <?php if (isset($_SESSION['error'])): ?>
             <div class="auth-error"><?php echo htmlspecialchars($_SESSION['error']); ?></div>
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
+        <!-- Login details -->
         <form id="loginForm" class="auth-form" action="../actions/login_action.php" method="POST" novalidate>
             <div class="form-group">
                 <label for="login_email">Email</label>
@@ -34,10 +40,13 @@ require_once "../core/core.php";
             </div>
         </form>
 
+        <!-- Registration link -->
         <p class="auth-link-text">
             Need an account? <a href="register.php">Register here</a>
         </p>
     </div>
+
+    <?php require_once __DIR__ . '/layout/footer.php'; ?>
 
     <script src="../js/validate.js"></script>
 </body>

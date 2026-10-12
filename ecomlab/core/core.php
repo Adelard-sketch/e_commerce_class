@@ -65,8 +65,15 @@ function require_login()
 
 function require_admin()
 {
+    if (!is_logged_in()) {
+        // Not logged in at all — send to login page first
+        $_SESSION['error'] = 'Please log in to access that page.';
+        redirect_to('/ecomlab/views/login.php');
+    }
+
     if (!is_admin()) {
-        $_SESSION['error'] = 'Access denied.';
+        // Logged in but not admin
+        $_SESSION['error'] = 'Access denied. Admin only.';
         redirect_to('/ecomlab/index.php');
     }
 }

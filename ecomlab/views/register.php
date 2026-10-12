@@ -9,15 +9,21 @@ require_once "../core/core.php";
 	<title>Register Customer</title>
 	<link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="auth-body">
+<body class="site-body auth-body auth-register">
+	<!-- Shared navigation -->
+	<?php require_once __DIR__ . '/layout/header.php'; ?>
+
+	<!-- Registration form -->
 	<div class="auth-page auth-page--wide">
 		<h1>Customer Registration</h1>
 
+		<!-- Registration feedback -->
 		<?php if (isset($_SESSION['error'])): ?>
 			<div class="auth-error"><?php echo htmlspecialchars($_SESSION['error']); ?></div>
 			<?php unset($_SESSION['error']); ?>
 		<?php endif; ?>
 
+		<!-- Customer details -->
 		<form id="registerForm" class="auth-form auth-form--grid" action="../actions/register_action.php" method="POST" novalidate>
 			<div class="form-group">
 				<label for="customer_name">Full Name</label>
@@ -31,7 +37,16 @@ require_once "../core/core.php";
 			</div>
 			<div class="form-group">
 				<label for="customer_pass">Password</label>
-				<input type="password" name="customer_pass" id="customer_pass" placeholder="Create a password">
+				<input type="password" name="customer_pass" id="customer_pass"
+				       placeholder="Create a password" autocomplete="new-password">
+				<div class="password-strength" id="passStrength" aria-live="polite"></div>
+				<ul class="password-rules" id="passRules">
+					<li id="rule-length">  At least 8 characters</li>
+					<li id="rule-upper">   One uppercase letter (A–Z)</li>
+					<li id="rule-lower">   One lowercase letter (a–z)</li>
+					<li id="rule-digit">   One number (0–9)</li>
+					<li id="rule-special"> One special character (!@#$%…)</li>
+				</ul>
 				<div class="field-error" data-error-for="customer_pass"></div>
 			</div>
 			<div class="form-group">
@@ -72,6 +87,52 @@ require_once "../core/core.php";
 		</p>
 	</div>
 
+	<?php require_once __DIR__ . '/layout/footer.php'; ?>
+
 	<script src="../js/validate.js"></script>
+	<script>
+	// Check password strength as the user types.
+	(function () {
+		const passInput  = document.getElementById('customer_pass');
+		const strengthEl = document.getElementById('passStrength');
+		const rules = {
+			'rule-length':  function (v) { return v.length >= 8; },
+			'rule-upper':   function (v) { return /[A-Z]/.test(v); },
+			'rule-lower':   function (v) { return /[a-z]/.test(v); },
+			'rule-digit':   function (v) { return /\d/.test(v); },
+			'rule-special': function (v) { return /[\W_]/.test(v); },
+		};
+		const labels = ['Weak', 'Weak', 'Fair', 'Good', 'Strong', 'Strong'];
+		const colors = ['#dc2626','#dc2626','#d97706','#2563eb','#16a34a','#16a34a'];
+
+		if (!passInput) return;
+
+		passInput.addEventListener('input', function () {
+			const val   = passInput.value;
+			let  passed = 0;
+
+			Object.keys(rules).forEach(function (id) {
+				const li = document.getElementById(id);
+				const ok = rules[id](val);
+				if (ok) {
+					li.classList.add('rule-ok');
+					li.classList.remove('rule-fail');
+					passed++;
+				} else {
+					li.classList.add('rule-fail');
+					li.classList.remove('rule-ok');
+				}
+			});
+
+			if (val === '') {
+				strengthEl.textContent = '';
+				strengthEl.style.color = '';
+			} else {
+				strengthEl.textContent = 'Strength: ' + labels[passed];
+				strengthEl.style.color = colors[passed];
+			}
+		});
+	}());
+	</script>
 </body>
 </html>

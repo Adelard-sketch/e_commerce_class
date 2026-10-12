@@ -10,12 +10,17 @@ require_login();
     <title>My Account</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
-<body class="auth-body">
+<body class="site-body auth-body">
+    <!-- Shared navigation -->
+    <?php require_once __DIR__ . '/../layout/header.php'; ?>
+
+    <!-- Account summary -->
     <main class="auth-page home-panel">
         <h1>My Account</h1>
-        <?php $showAccountLink = false; ?>
-        <?php require_once __DIR__ . '/../layout/header.php'; ?>
         <p class="welcome-message">Welcome, <?php echo htmlspecialchars($_SESSION['customer_name'] ?? 'Customer'); ?>!</p>
     </main>
+
+    <!-- Shared footer -->
+    <?php require_once __DIR__ . '/../layout/footer.php'; ?>
 </body>
 </html>

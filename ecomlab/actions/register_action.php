@@ -35,8 +35,9 @@ if (strlen($email) > 50 || strlen($rawName) > 100 || strlen($country) > 30 || st
     redirect_to('/ecomlab/views/register.php');
 }
 
-if (!preg_match('/^(?=.*\d).{8,}$/', $pass)) {
-    $_SESSION['error'] = 'Password must be at least 8 characters long and contain at least one number.';
+// Strong password: 8+ chars, at least one uppercase, one lowercase, one digit, one special char
+if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $pass)) {
+    $_SESSION['error'] = 'Password must be at least 8 characters and include an uppercase letter, a lowercase letter, a number, and a special character (e.g. ! @ # $ %).';
     redirect_to('/ecomlab/views/register.php');
 }
 
