@@ -110,6 +110,28 @@ class ProductClass extends Database
         return $this->fetchOne($sql, [(int) $id]);
     }
 
+    public function getProductsByIds($ids)
+    {
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids), function ($id) {
+            return $id > 0;
+        })));
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $sql = "SELECT p.*,
+                       c.cat_name,
+                       b.brand_name
+                FROM products p
+                JOIN categories c ON c.cat_id   = p.product_cat
+                JOIN brands     b ON b.brand_id = p.product_brand
+                WHERE p.product_id IN ({$placeholders})";
+
+        return $this->fetchAll($sql, $ids) ?: [];
+    }
+
     public function getFeaturedProducts($limit = 6)
     {
         $limit = (int) $limit;

@@ -84,10 +84,13 @@ if (!$product) {
                 <?php endif; ?>
 
                 <div class="single-product__actions">
-                    <a class="btn-cart btn-cart--large"
-                       href="/ecomlab/index.php?add_cart=<?= (int)$product['product_id'] ?>">
-                        Add to Cart
-                    </a>
+                    <form method="POST" action="/ecomlab/actions/cart_action.php" class="single-product__cart-form">
+                        <input type="hidden" name="action" value="add">
+                        <input type="hidden" name="product_id" value="<?= (int) $product['product_id'] ?>">
+                        <label for="product-quantity">Quantity</label>
+                        <input id="product-quantity" type="number" name="quantity" min="1" step="1" value="1" required>
+                        <button class="btn-cart--large" type="submit">Add to Cart</button>
+                    </form>
                 </div>
 
                 <?php if (is_admin()): ?>

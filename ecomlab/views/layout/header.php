@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../core/core.php';
+$cartItemCount = cart_item_count();
 ?>
 <header class="shop-header">
     <!-- Store logo -->
@@ -13,6 +14,10 @@ require_once __DIR__ . '/../../core/core.php';
     <!-- Main navigation -->
     <nav class="auth-nav shop-nav" aria-label="Main navigation">
         <a href="/ecomlab/index.php">Home</a>
+        <a class="nav-cart" href="/ecomlab/views/cart.php" aria-label="Shopping cart, <?= $cartItemCount ?> items">
+            <img class="nav-cart__icon" src="/ecomlab/images/products/cart.svg" alt="" aria-hidden="true">
+            <span class="cart-count"><?= $cartItemCount ?></span>
+        </a>
 
         <?php if (is_logged_in()): ?>
 

@@ -76,6 +76,11 @@ class ProductController
         return $this->product->getProductById($id);
     }
 
+    public function getProductsByIds($ids)
+    {
+        return $this->product->getProductsByIds($ids);
+    }
+
     public function getFeaturedProducts($limit = 6)
     {
         return $this->product->getFeaturedProducts($limit);

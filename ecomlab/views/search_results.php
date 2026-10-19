@@ -73,10 +73,12 @@ $products   = $query !== '' ? $controller->searchProducts($query) : [];
                                    href="/ecomlab/views/single_product.php?pro_id=<?= (int)$p['product_id'] ?>">
                                     Details
                                 </a>
-                                <a class="btn-cart"
-                                   href="/ecomlab/index.php?add_cart=<?= (int)$p['product_id'] ?>">
-                                    Add to Cart
-                                </a>
+                                <form method="POST" action="/ecomlab/actions/cart_action.php">
+                                    <input type="hidden" name="action" value="add">
+                                    <input type="hidden" name="product_id" value="<?= (int)$p['product_id'] ?>">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button class="btn-cart" type="submit">Add to Cart</button>
+                                </form>
                             </div>
                         </div>
                     </article>

@@ -20,6 +20,25 @@ function is_admin()
     return isset($_SESSION['user_role']) && (int) $_SESSION['user_role'] === 1;
 }
 
+function cart_item_count()
+{
+    $cart = $_SESSION['cart'] ?? [];
+    if (!is_array($cart)) {
+        return 0;
+    }
+
+    $count = 0;
+    foreach ($cart as $productId => $quantity) {
+        $productId = filter_var($productId, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        $quantity = filter_var($quantity, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+        if ($productId !== false && $quantity !== false) {
+            $count++;
+        }
+    }
+
+    return $count;
+}
+
 function isLoggedIn()
 {
     return is_logged_in();
@@ -82,4 +101,3 @@ function requireLogin()
 {
     require_login();
 }
-
