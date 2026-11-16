@@ -1,2 +1,5 @@
 /setup_admin.php
 /debug_session.php
+/core/db_cred.php
+/core/paystack_credentials.php
+/views/layout/db_cred.php

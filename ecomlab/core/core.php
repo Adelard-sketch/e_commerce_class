@@ -4,6 +4,26 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+function app_url($path = '')
+{
+    static $basePath = null;
+
+    if ($basePath === null) {
+        $scriptPath = parse_url($_SERVER['SCRIPT_NAME'] ?? '', PHP_URL_PATH);
+        $scriptDirectory = rtrim(str_replace('\\', '/', dirname($scriptPath ?: '/')), '/.');
+        $basePath = preg_replace(
+            '~/(?:actions|views|view|controller|controllers|classes|core|functions)(?:/.*)?$~',
+            '',
+            $scriptDirectory
+        );
+        if ($basePath === '/') {
+            $basePath = '';
+        }
+    }
+
+    return $basePath . '/' . ltrim($path, '/');
+}
+
 function redirect_to($path)
 {
     header('Location: ' . $path);
@@ -78,7 +98,7 @@ function logoutCustomer()
 function require_login()
 {
     if (!is_logged_in()) {
-        redirect_to('/ecomlab/views/login.php');
+        redirect_to(app_url('views/login.php'));
     }
 }
 
@@ -87,13 +107,13 @@ function require_admin()
     if (!is_logged_in()) {
         // Not logged in at all — send to login page first
         $_SESSION['error'] = 'Please log in to access that page.';
-        redirect_to('/ecomlab/views/login.php');
+        redirect_to(app_url('views/login.php'));
     }
 
     if (!is_admin()) {
         // Logged in but not admin
         $_SESSION['error'] = 'Access denied. Admin only.';
-        redirect_to('/ecomlab/index.php');
+        redirect_to(app_url('index.php'));
     }
 }
 

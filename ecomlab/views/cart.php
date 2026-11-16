@@ -11,6 +11,12 @@ $success = $_SESSION['success'] ?? null;
 unset($_SESSION['success']);
 $error = $_SESSION['error'] ?? null;
 unset($_SESSION['error']);
+$csrfToken = $_SESSION['csrf_token'] ?? '';
+if ($csrfToken === '') {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    $csrfToken = $_SESSION['csrf_token'];
+}
+$pendingPayment = $_SESSION['paystack_pending'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +24,7 @@ unset($_SESSION['error']);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shopping Cart | Shoppin</title>
-    <link rel="stylesheet" href="/ecomlab/css/style.css">
+    <link rel="stylesheet" href="<?= app_url('css/style.css') ?>">
 </head>
 <body class="site-body shop-body">
 
@@ -39,7 +45,7 @@ unset($_SESSION['error']);
 
         <?php if (empty($items)): ?>
             <p class="empty-note">Your cart is empty.</p>
-            <p class="cart-continue"><a class="btn-details" href="/ecomlab/index.php">Continue shopping</a></p>
+            <p class="cart-continue"><a class="btn-details" href="<?= app_url('index.php') ?>">Continue shopping</a></p>
         <?php else: ?>
             <div class="cart-layout">
                 <div class="cart-items">
@@ -47,7 +53,7 @@ unset($_SESSION['error']);
                         <article class="cart-item">
                             <div class="cart-item__image">
                                 <?php if (!empty($item['product_image'])): ?>
-                                    <img src="/ecomlab/images/products/<?= htmlspecialchars($item['product_image']) ?>"
+                                    <img src="<?= app_url('images/products/' . rawurlencode($item['product_image'])) ?>"
                                          alt="<?= htmlspecialchars($item['product_title']) ?>">
                                 <?php else: ?>
                                     <span>No Image</span>
@@ -60,7 +66,7 @@ unset($_SESSION['error']);
                                 <p class="cart-item__price">GHS <?= number_format((float) $item['product_price'], 2) ?> each</p>
 
                                 <div class="cart-item__actions">
-                                    <form method="POST" action="/ecomlab/actions/cart_action.php" class="cart-quantity-form">
+                                    <form method="POST" action="<?= app_url('actions/cart_action.php') ?>" class="cart-quantity-form">
                                         <input type="hidden" name="action" value="update">
                                         <input type="hidden" name="product_id" value="<?= (int) $item['product_id'] ?>">
                                         <label for="quantity-<?= (int) $item['product_id'] ?>">Qty</label>
@@ -69,7 +75,7 @@ unset($_SESSION['error']);
                                                value="<?= (int) $item['quantity'] ?>" required>
                                         <button type="submit" class="btn-details">Update</button>
                                     </form>
-                                    <form method="POST" action="/ecomlab/actions/cart_action.php">
+                                    <form method="POST" action="<?= app_url('actions/cart_action.php') ?>">
                                         <input type="hidden" name="action" value="remove">
                                         <input type="hidden" name="product_id" value="<?= (int) $item['product_id'] ?>">
                                         <button type="submit" class="cart-remove">Remove</button>
@@ -88,9 +94,28 @@ unset($_SESSION['error']);
                     <h2>Order Summary</h2>
                     <p><span>Subtotal</span><strong>GHS <?= number_format((float) $subtotal, 2) ?></strong></p>
                     <p class="cart-summary__note">Shipping and taxes are not included in this subtotal.</p>
-                    <button class="cart-payment-button" type="button" disabled>Proceed to Payment</button>
-                    <p class="cart-payment-notice" role="status">Payment will be implemented soon.</p>
-                    <a class="cart-summary__continue" href="/ecomlab/index.php">Continue shopping</a>
+                    <?php if (is_logged_in()): ?>
+                        <?php if (is_array($pendingPayment) && !empty($pendingPayment['authorization_url'])): ?>
+                            <a class="cart-payment-button" href="<?= htmlspecialchars($pendingPayment['authorization_url']) ?>">Continue Paystack payment</a>
+                            <p class="cart-payment-notice" role="status">A Paystack payment is already in progress. You can continue it or check its status below.</p>
+                        <?php else: ?>
+                            <form method="POST" action="<?= app_url('actions/paystack_checkout_action.php') ?>">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                                <button class="cart-payment-button" type="submit">Pay with Paystack</button>
+                            </form>
+                            <p class="cart-payment-notice" role="status">Secure checkout in Ghana cedis (GHS). Test payments use your Paystack test keys.</p>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <a class="cart-payment-button cart-payment-login" href="<?= app_url('views/login.php') ?>">Log in to checkout</a>
+                        <p class="cart-payment-notice" role="status">Please log in before paying with Paystack.</p>
+                    <?php endif; ?>
+                    <?php if (is_logged_in() && is_array($pendingPayment) && !empty($pendingPayment['reference'])): ?>
+                        <form method="GET" action="<?= app_url('actions/paystack_callback_action.php') ?>">
+                            <input type="hidden" name="reference" value="<?= htmlspecialchars($pendingPayment['reference']) ?>">
+                            <button class="cart-payment-button cart-payment-check" type="submit">Check pending payment</button>
+                        </form>
+                    <?php endif; ?>
+                    <a class="cart-summary__continue" href="<?= app_url('index.php') ?>">Continue shopping</a>
                 </aside>
             </div>
         <?php endif; ?>
