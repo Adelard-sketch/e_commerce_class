@@ -8,7 +8,7 @@ function paystack_config()
     }
 
     $config = [];
-    $credentialsFile = __DIR__ . '/paystack_credentials.php';
+    $credentialsFile = __DIR__ . '/paystack_credential.php';
     if (is_file($credentialsFile)) {
         $loadedConfig = require $credentialsFile;
         if (!is_array($loadedConfig)) {

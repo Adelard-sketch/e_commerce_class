@@ -2,4 +2,5 @@
 /debug_session.php
 /core/db_cred.php
 /core/paystack_credentials.php
+/core/paystack_credential.php
 /views/layout/db_cred.php
